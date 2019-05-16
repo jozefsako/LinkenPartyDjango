@@ -1,15 +1,24 @@
+# environement
 language: python
 
+# language version
 python:
-  - "3.7"
+  - 3.7
 
+# command to execute before installation
 before_install:
   - gem install bundler
 
 # command to install dependencies
 install:
-  - pip install -r requirements.txt
+  - pip3 install -r requirements.txt
 
 # command to run tests
 script:
-  - pytest
+  - python3 manage.py test
+
+# command to deploy
+deploy:
+  provider: azure_web_apps
+  verbose: true
+  
