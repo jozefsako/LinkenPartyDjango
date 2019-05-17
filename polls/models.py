@@ -10,18 +10,21 @@ from django.contrib.auth.models import AbstractBaseUser
 
 class Events(models.Model):
     id_event = models.IntegerField(primary_key=True)
-    id_user = models.ForeignKey('Users', models.DO_NOTHING, db_column='id_user')
+    id_user = models.ForeignKey('AUsers', models.DO_NOTHING, db_column='id_user')
     creation_date = models.DateTimeField()
     location_map = models.TextField(blank=True, null=True)
     start_date = models.DateTimeField(blank=True, null=True)
     end_date = models.DateTimeField(blank=True, null=True)
     price = models.FloatField(blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
+    address_event = models.TextField(blank=True, null=True)
     size_hosting = models.IntegerField(blank=True, null=True)
-    state = models.CharField(max_length=50, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    type = models.CharField(max_length=50)
+    state_event = models.CharField(max_length=50, blank=True, null=True)
+    description_event = models.TextField(blank=True, null=True)
+    type_event = models.CharField(max_length=50)
     version_number = models.IntegerField()
+    name_event = models.CharField(max_length=250)
+    theme_event = models.CharField(max_length=250)
+
 
     class Meta:
         managed = False
@@ -30,15 +33,15 @@ class Events(models.Model):
 
 class Participations(models.Model):
     id_participation = models.IntegerField(primary_key=True)
-    id_user = models.ForeignKey('Users', models.DO_NOTHING, db_column='id_user')
-    id_event = models.ForeignKey(Events, models.DO_NOTHING, db_column='id_event')
+    id_user = models.ForeignKey('AUsers', models.DO_NOTHING, db_column='id_user')
+    id_event = models.ForeignKey('Events', models.DO_NOTHING, db_column='id_event')
     participation_date = models.DateField()
 
     class Meta:
         managed = False
         db_table = 'participations'
 
-class Users(AbstractBaseUser):
+class AUsers(models.Model):
     id_user = models.IntegerField(primary_key=True)
     first_name = models.CharField(max_length=250)
     last_name = models.CharField(max_length=250)
@@ -49,9 +52,9 @@ class Users(AbstractBaseUser):
     registration_date = models.DateField()
     birthdate = models.DateField(blank=True, null=True)
     phone = models.CharField(max_length=50, blank=True, null=True)
-    sex = models.CharField(max_length=1)
+    gender = models.CharField(max_length=1)
     version_number = models.IntegerField()
 
     class Meta:
         managed = False
-        db_table = 'users'
+        db_table = 'ausers'

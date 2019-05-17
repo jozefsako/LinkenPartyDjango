@@ -1,19 +1,24 @@
 from rest_framework import serializers
+from .models import AUsers, Events, Participations
 from django.contrib.auth.models import User
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        many = True,
+        model = AUsers
         fields = '__all__'
 
-#class LoginSerializer(serializers.ModelSerializer):
-#    class Meta:
-#        model = User
-#        fields = ('username','password_user')
-    
-#    def validate_user:
-#        user = None
-#        user = authenticate(username = username, password = password)
-#        if user is None:
-#            raise ValueError('User unkown.')
-#        return user
+
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        many = True,
+        model = Events
+        fields = '__all__'
+
+
+class ParticipationSerializer(serializers.ModelSerializer):
+    class Meta:
+        many = True,
+        model = Participations
+        fields = '__all__'
