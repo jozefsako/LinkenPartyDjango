@@ -5,6 +5,14 @@ language: python
 python:
   - 3.6.7
 
+# database service
+services:
+  - mysql
+
+# virutal environement
+env:
+  -DJANGO=2.1.3 DB=mysql
+
 # command to execute before installation
 before_install:
   - gem install bundler
