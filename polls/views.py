@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from django.core import serializers
 from django.conf import settings
 from django.db import connection
+from .models import Users
 
 def index(request):
     #GetAllUsers(request)
@@ -30,3 +31,7 @@ def GetAllUsers(request):
     cat = str(users)
     c = cat.replace('\'', '\"')
     return Response(json.loads(c), status=status.HTTP_200_OK)
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

@@ -16,10 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from . import views
+from .routers import router
 
 # Create your views here.
 urlpatterns = [
     path('', views.index),
     path('admin/', admin.site.urls),
     path('polls/', include('polls.urls')),
+    path('api/', include(router.urls)),
 ]
