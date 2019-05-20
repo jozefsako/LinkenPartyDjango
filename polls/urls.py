@@ -9,11 +9,14 @@ urlpatterns = [
 
     # Users
     path('allUsers', views.GetAllUsers),
+    path('currentUser/', views.Current_user),
     path('getUser', views.GetUser.as_view()),
+    path('users/', views.UserList.as_view()),
 
     # Events
     path('allEvents', views.GetAllEvents),
     path('getEvent', views.GetEventByIdView),
+    path('events/', views.EventList.as_view()),
 
     # Participations
     path('participations', views.GetAllParticipations),

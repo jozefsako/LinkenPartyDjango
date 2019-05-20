@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'LinkenParty.urls'
@@ -75,20 +77,31 @@ WSGI_APPLICATION = 'LinkenParty.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
+# By adding the 'test' in sys.argv Django will create a test
+# database based on my models on sqlite3 to run the tests otherwise
+# It will create the test database on Azure
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'sql_server.pyodbc',
-        'NAME': 'linkenparty',
-        'USER': 'jozefsako',
-        'PASSWORD': 'Mdpgroupe11',
-        'HOST': 'linkenparty.database.windows.net',
-        'PORT': '1433',
-        'OPTIONS': {
-                'driver': 'ODBC Driver 17 for SQL Server',
-        },
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'mydatabase'
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'sql_server.pyodbc',
+            'NAME': 'linkenparty',
+            'USER': 'jozefsako',
+            'PASSWORD': 'Mdpgroupe11',
+            'HOST': 'linkenparty.database.windows.net',
+            'PORT': '1433',
+            'OPTIONS': {
+                    'driver': 'ODBC Driver 17 for SQL Server',
+            },
+        }
+    }
 
 # set this to False if you want to turn off pyodbc's connection pooling
 DATABASE_CONNECTION_POOLING = False
@@ -138,5 +151,20 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny'
-    ]
+    ],
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
 }
+
+# Changing the DEFAULT_JWT_PAYLOAD
+# COSTOM_JWT : retruns a user based on my model + JWT 
+JWT_AUTH = {
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'polls.utils.jwtHandler'
+}
+
+CORS_ORIGIN_ALLOW_ALL = True

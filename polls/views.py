@@ -2,7 +2,7 @@ from django.http import HttpResponse
 import json
 from django.shortcuts import render, redirect
 from rest_framework import viewsets
-from .serializers import UserSerializer, EventSerializer, ParticipationSerializer
+from .serializers import UserSerializer, EventSerializer, ParticipationSerializer, AUserSerializerWithToken
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
@@ -16,62 +16,106 @@ from .models import AUsers, Events, Participations
 
 
 def index(request):
-    #GetAllUsers(request)
-    my_custom_sql()
-    GetAllEvents()
-    return HttpResponse("Hello, world. You're at the polls index.")
+    return HttpResponse("Hello, world. You're at the api index.")
 
 
-def my_custom_sql():
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM users")
-        row = cursor.fetchall()
-    print(row)
-    return row
+# Get current AUser with JWT
+# param: request
+@csrf_exempt
+@api_view(['GET'])
+def Current_user(request):
+    print(request.id_user)
+    serializer = UserSerializer(request.user)
+    return Response(serializer.data)
 
-
+# Get all the Users
+# param: request
 @api_view(['GET'])
 def GetAllUsers(request):
-    users = serializers.serialize('json', AUsers.objects.all())
-    cat = str(users)
-    c = cat.replace('\'', '\"')
-    return Response(json.loads(c), status=status.HTTP_200_OK)
+    ausers = serializers.serialize('json', AUsers.objects.all())
+    output = str(ausers)
+    formated_output = output.replace('\'', '\"')
+    return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
-
-class GetUser(APIView):
-    def post(self, request, format=None):
-        print(request)
-        id_user = request.data['id_user']
-        user = AUsers.objects.filter(id=id_user)
-        prodSer = serializers.serialize('json', user)
-        pro = str(prodSer)
-        p = pro.replace('\'', '\"')
-        return Response(json.loads(p), status=status.HTTP_200_OK)
-
-
+# Get all the Events
+# param: request
 @api_view(['GET'])
 def GetAllEvents(request):
-    # with connection.cursor() as cursor:
-    #     cursor.execute("SELECT * FROM events")
-    #     row = cursor.fetchall()
-    # print(row)
-    # return row
     events = serializers.serialize('json', Events.objects.all())
-    cat = str(events)
-    c = cat.replace('\'', '\"')
-    return Response(json.loads(c), status=status.HTTP_200_OK)
+    output = str(events)
+    formated_output = output.replace('\'', '\"')
+    return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 def GetEventByIdView(request):
-    return 0
+     id_event = request.data['id_event']
+     events = serializers.serialize(
+         'json', Events.objects.filter(id_event=id_event))
+     output = str(events)
+     formated_output = output.replace('\'', '\"')
+     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
+# Get all the Participations of Events
+# param: request
 @api_view(['GET'])
 def GetAllParticipations(request):
-    return 0
+    participations = serializers.serialize(
+        'json', Participations.objects.all())
+    output = str(participations)
+    formated_output = output.replace('\'', '\"')
+    return Response(json.loads(formated_output), status=status.HTTP_200_OK)
+
+
+class GetUser(APIView):
+    def post(self, request, format=None):
+        id_user = request.data['id_user']
+        aUser = AUsers.objects.filter(id=id_user)
+        aUser_serialized = serializers.serialize('json', aUser)
+        aUser_str = str(aUser_serialized)
+        formated_user = aUser_str.replace('\'', '\"')
+        return Response(json.loads(formated_user), status=status.HTTP_200_OK)
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = AUsers.objects.all()
     serializer_class = UserSerializer
+
+
+# UserList
+class UserList(APIView):
+    def post(self, request, format=None):
+        serializer = AUserSerializerWithToken(data=request.data)
+        #serializer = UserSerializer(data=request.data)
+        print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# EventList
+class EventList(APIView):
+    def put(self, request, pk):
+        snippet = self.get_object(pk)
+        serializer = EventSerializer(snippet, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, format=None):
+        id_event = request.data['id_event']
+        events = serializers.serialize(
+            'json', Events.objects.filter(id_event=id_event))
+        output = str(events)
+        formated_output = output.replace('\'', '\"')
+        return Response(json.loads(formated_output), status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        serializer = EventSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

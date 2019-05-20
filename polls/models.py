@@ -8,9 +8,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 
+
 class Events(models.Model):
     id_event = models.IntegerField(primary_key=True)
-    id_user = models.ForeignKey('AUsers', models.DO_NOTHING, db_column='id_user')
+    id_user = models.ForeignKey(
+        'AUsers', models.DO_NOTHING, db_column='id_user')
+    name_event = models.CharField(max_length=250)
+    theme_event = models.CharField(max_length=250)
     creation_date = models.DateTimeField()
     location_map = models.TextField(blank=True, null=True)
     start_date = models.DateTimeField(blank=True, null=True)
@@ -22,9 +26,6 @@ class Events(models.Model):
     description_event = models.TextField(blank=True, null=True)
     type_event = models.CharField(max_length=50)
     version_number = models.IntegerField()
-    name_event = models.CharField(max_length=250)
-    theme_event = models.CharField(max_length=250)
-
 
     class Meta:
         managed = False
@@ -33,20 +34,23 @@ class Events(models.Model):
 
 class Participations(models.Model):
     id_participation = models.IntegerField(primary_key=True)
-    id_user = models.ForeignKey('AUsers', models.DO_NOTHING, db_column='id_user')
-    id_event = models.ForeignKey('Events', models.DO_NOTHING, db_column='id_event')
+    id_user = models.ForeignKey(
+        'AUsers', models.DO_NOTHING, db_column='id_user')
+    id_event = models.ForeignKey(
+        'Events', models.DO_NOTHING, db_column='id_event')
     participation_date = models.DateField()
 
     class Meta:
         managed = False
         db_table = 'participations'
 
+
 class AUsers(models.Model):
     id_user = models.IntegerField(primary_key=True)
     first_name = models.CharField(max_length=250)
     last_name = models.CharField(max_length=250)
     email = models.CharField(max_length=250)
-    password_user = models.CharField(max_length=250)
+    password = models.CharField(max_length=250)
     username = models.CharField(max_length=50)
     type_user = models.CharField(max_length=1)
     registration_date = models.DateField()
