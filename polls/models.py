@@ -62,3 +62,21 @@ class AUsers(models.Model):
     class Meta:
         managed = False
         db_table = 'ausers'
+
+
+class AUsersWithouID(models.Model):
+    first_name = models.CharField(max_length=250)
+    last_name = models.CharField(max_length=250)
+    email = models.CharField(max_length=250)
+    password = models.CharField(max_length=250)
+    username = models.CharField(max_length=50)
+    type_user = models.CharField(max_length=1)
+    registration_date = models.DateField()
+    birthdate = models.DateField(blank=True, null=True)
+    phone = models.CharField(max_length=50, blank=True, null=True)
+    gender = models.CharField(max_length=1)
+    version_number = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'ausers'

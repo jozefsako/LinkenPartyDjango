@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import AUsers, Events, Participations
+from .models import AUsers, Events, Participations, AUsersWithouID
 from rest_framework_jwt.settings import api_settings
 
 
@@ -9,6 +9,22 @@ class UserSerializer(serializers.ModelSerializer):
         many = True,
         model = AUsers
         fields = '__all__'
+
+class UserSerializerWithoutID(serializers.ModelSerializer):
+    class Meta:
+        model = AUsersWithouID
+        fields = (
+            "first_name",
+            "last_name",
+            "email",
+            "password",
+            "username",
+            "type_user",
+            "registration_date",
+            "birthdate",
+            "phone",
+            "gender",
+            "version_number")
 
 
 class EventSerializer(serializers.ModelSerializer):

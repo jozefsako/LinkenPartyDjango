@@ -2,7 +2,7 @@ from django.http import HttpResponse
 import json
 from django.shortcuts import render, redirect
 from rest_framework import viewsets
-from .serializers import UserSerializer, EventSerializer, ParticipationSerializer, AUserSerializerWithToken
+from .serializers import UserSerializer, EventSerializer, ParticipationSerializer, AUserSerializerWithToken, UserSerializerWithoutID
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 from django.core import serializers
 from django.conf import settings
 from django.db import connection
-from .models import AUsers, Events, Participations
+from .models import AUsers, Events, Participations, AUsersWithouID
 
 
 def index(request):
@@ -96,6 +96,14 @@ class UserList(APIView):
         if(jsonUser[0]['fields']['password'] == password):
              return Response(json.loads(formated_user), status=status.HTTP_202_ACCEPTED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, format=None):
+        serializer = UserSerializerWithoutID(data=request.data)
+        print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # EventList
