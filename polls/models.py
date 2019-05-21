@@ -8,7 +8,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 
-
 class Events(models.Model):
     id_event = models.IntegerField(primary_key=True)
     id_user = models.ForeignKey(
@@ -32,8 +31,42 @@ class Events(models.Model):
         db_table = 'events'
 
 
+class EventsWithoutID(models.Model):
+    id_user = models.ForeignKey(
+        'AUsers', models.DO_NOTHING, db_column='id_user')
+    name_event = models.CharField(max_length=250)
+    theme_event = models.CharField(max_length=250)
+    creation_date = models.DateTimeField()
+    location_map = models.TextField(blank=True, null=True)
+    start_date = models.DateTimeField(blank=True, null=True)
+    end_date = models.DateTimeField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    address_event = models.TextField(blank=True, null=True)
+    size_hosting = models.IntegerField(blank=True, null=True)
+    state_event = models.CharField(max_length=50, blank=True, null=True)
+    description_event = models.TextField(blank=True, null=True)
+    type_event = models.CharField(max_length=50)
+    version_number = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'events'
+
+
 class Participations(models.Model):
     id_participation = models.IntegerField(primary_key=True)
+    id_user = models.ForeignKey(
+        'AUsers', models.DO_NOTHING, db_column='id_user')
+    id_event = models.ForeignKey(
+        'Events', models.DO_NOTHING, db_column='id_event')
+    participation_date = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = 'participations'
+
+
+class ParticipationsWithouID(models.Model):
     id_user = models.ForeignKey(
         'AUsers', models.DO_NOTHING, db_column='id_user')
     id_event = models.ForeignKey(

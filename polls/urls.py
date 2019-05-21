@@ -16,8 +16,11 @@ urlpatterns = [
 
     # Events
     path('allEvents', views.GetAllEvents),
-    path('getEvent', views.GetEventByIdView),
+    path('getEvent', views.GetEventById),
     path('events/', views.EventList.as_view()),
+    path('addEvent', views.insertEvent),
+    path('eventParticipations', views.GetEventParticipations),
+    path('userParticipations', views.GetUserParticipations),
 
     # Participations
     path('participations', views.GetAllParticipations),

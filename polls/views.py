@@ -2,7 +2,7 @@ from django.http import HttpResponse
 import json
 from django.shortcuts import render, redirect
 from rest_framework import viewsets
-from .serializers import UserSerializer, EventSerializer, ParticipationSerializer, AUserSerializerWithToken, UserSerializerWithoutID
+from .serializers import *
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 from django.core import serializers
 from django.conf import settings
 from django.db import connection
-from .models import AUsers, Events, Participations, AUsersWithouID
+from .models import *
 
 
 def index(request):
@@ -28,6 +28,7 @@ def Current_user(request):
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
 
+
 # Get all the Users
 # param: request
 @api_view(['GET'])
@@ -36,6 +37,7 @@ def GetAllUsers(request):
     output = str(ausers)
     formated_output = output.replace('\'', '\"')
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
+
 
 # Get all the Events
 # param: request
@@ -54,8 +56,18 @@ def GetAllEvents(request):
         return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
+# InsertEvent
+@api_view(['POST'])
+def insertEvent(request):
+    serializer = EventSerializerWithoutID(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET'])
-def GetEventByIdView(request):
+def GetEventById(request):
      id_event = request.data['id_event']
      events = serializers.serialize(
          'json', Events.objects.filter(id_event=id_event))
@@ -70,6 +82,30 @@ def GetEventByIdView(request):
 def GetAllParticipations(request):
     participations = serializers.serialize(
         'json', Participations.objects.all())
+    output = str(participations)
+    formated_output = output.replace('\'', '\"')
+    return Response(json.loads(formated_output), status=status.HTTP_200_OK)
+
+
+# Get all the Participations of the Event
+# param: request
+@api_view(['POST'])
+def GetEventParticipations(request):
+    id_event = request.data['id_event']
+    participations = serializers.serialize(
+        'json', Participations.objects.filter(id_event = id_event))
+    output = str(participations)
+    formated_output = output.replace('\'', '\"')
+    return Response(json.loads(formated_output), status=status.HTTP_200_OK)
+
+
+# Get all the Participations of the User
+# param: request
+@api_view(['POST'])
+def GetUserParticipations(request):
+    id_user = request.data['id_user']
+    participations = serializers.serialize(
+        'json', Participations.objects.filter(id_user = id_user))
     output = str(participations)
     formated_output = output.replace('\'', '\"')
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
@@ -111,11 +147,6 @@ class GetUser(APIView):
         return Response(json.loads(formated_user), status=status.HTTP_200_OK)
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = AUsers.objects.all()
-    serializer_class = UserSerializer
-
-
 # UserList
 class UserList(APIView):
     def post(self, request, format=None):
@@ -133,14 +164,6 @@ class UserList(APIView):
 
 # EventList
 class EventList(APIView):
-    def put(self, request, pk):
-        snippet = self.get_object(pk)
-        serializer = EventSerializer(snippet, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     def get(self, request, format=None):
         id_event = request.data['id_event']
         events = serializers.serialize(
@@ -156,9 +179,3 @@ class EventList(APIView):
         output = str(events)
         formated_output = output.replace('\'', '\"')
         return Response(json.loads(formated_output), status=status.HTTP_200_OK)
-
-
-# InsertEvent
-@api_view(['POST'])
-def insertEvent(request):
-    return 0

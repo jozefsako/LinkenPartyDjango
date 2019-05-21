@@ -1,32 +1,23 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import AUsers, Events, Participations, AUsersWithouID
+from .models import *
 from rest_framework_jwt.settings import api_settings
 
-
+# Users
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         many = True,
         model = AUsers
         fields = '__all__'
 
+
 class UserSerializerWithoutID(serializers.ModelSerializer):
     class Meta:
         model = AUsersWithouID
-        fields = (
-            "first_name",
-            "last_name",
-            "email",
-            "password",
-            "username",
-            "type_user",
-            "registration_date",
-            "birthdate",
-            "phone",
-            "gender",
-            "version_number")
+        fields = ('__all__')
 
 
+# Events
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         many = True,
@@ -34,10 +25,23 @@ class EventSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class EventSerializerWithoutID(serializers.ModelSerializer):
+    class Meta:
+        model = EventsWithoutID
+        fields = '__all__'
+
+
+# Participations
 class ParticipationSerializer(serializers.ModelSerializer):
     class Meta:
-        many = True,
         model = Participations
+        fields = '__all__'
+
+
+class ParticipationSerializerWithoutID(serializers.ModelSerializer):
+    class Meta:
+        many = True,
+        model = ParticipationsWithouID
         fields = '__all__'
 
 
@@ -65,19 +69,18 @@ class AUserSerializerWithToken(serializers.ModelSerializer):
     class Meta:
         model = AUsers
         fields = ("token",
-            "id_user" 
-            "first_name",
-            "last_name",
-            "email",
-            "password_user",
-            "username",
-            "type_user",
-            "registration_date",
-            "birthdate",
-            "phone",
-            "gender",
-            "version_number")
-
+                  "id_user"
+                  "first_name",
+                  "last_name",
+                  "email",
+                  "password_user",
+                  "username",
+                  "type_user",
+                  "registration_date",
+                  "birthdate",
+                  "phone",
+                  "gender",
+                  "version_number")
 
     #    model = AUsers
     #     fields = ("token"
