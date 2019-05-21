@@ -39,12 +39,19 @@ def GetAllUsers(request):
 
 # Get all the Events
 # param: request
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def GetAllEvents(request):
-    events = serializers.serialize('json', Events.objects.all())
-    output = str(events)
-    formated_output = output.replace('\'', '\"')
-    return Response(json.loads(formated_output), status=status.HTTP_200_OK)
+
+    if request.method == 'POST':
+        longitude = request.data['longitude']
+        latitude = request.data['latitude']
+        distance = request.data['distance']
+
+    elif request.method == 'GET':
+        events = serializers.serialize('json', Events.objects.all())
+        output = str(events)
+        formated_output = output.replace('\'', '\"')
+        return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -66,6 +73,36 @@ def GetAllParticipations(request):
     output = str(participations)
     formated_output = output.replace('\'', '\"')
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
+
+
+# Add new user
+# param: request
+@api_view(['POST'])
+def insertUser(request):
+    serializer = UserSerializerWithoutID(data=request.data)
+
+    #Checks if username or email already exists
+    username = request.data['username']
+    email = request.data['email']
+
+    aUser1 = AUsers.objects.filter(username=username)
+    aUser2 = AUsers.objects.filter(email=email)
+
+    if(AUsers.objects.filter(username=username).count() > 0):
+        return Response(status=status.HTTP_409_CONFLICT)
+
+    elif(AUsers.objects.filter(email=email).count > 0):
+        return Response(status=status.HTTP_409_CONFLICT)
+
+    elif serializer.is_valid():
+        serializer.save()
+        aUser = AUsers.objects.filter(username=username)
+        aUser_serialized = serializers.serialize('json', aUser)
+        aUser_str = str(aUser_serialized)
+        formated_user = aUser_str.replace('\'', '\"')
+        jsonUser = json.loads(formated_user)
+        return Response(jsonUser.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetUser(APIView):
@@ -96,32 +133,6 @@ class UserList(APIView):
         if(jsonUser[0]['fields']['password'] == password):
              return Response(json.loads(formated_user), status=status.HTTP_202_ACCEPTED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request, format=None):
-        serializer = UserSerializerWithoutID(data=request.data)
-        
-        #Checks if username or email already exists
-        username = request.data['username']
-        email = request.data['email']
-
-        aUser1 = AUsers.objects.filter(username=username)
-        aUser2 = AUsers.objects.filter(email=email)
-
-        if(AUsers.objects.filter(username=username).count() > 0):
-            return Response(status=status.HTTP_409_CONFLICT)
-
-        elif(AUsers.objects.filter(email=email).count > 0):
-            return Response(status=status.HTTP_409_CONFLICT)
-
-        elif serializer.is_valid():
-            serializer.save()
-            aUser = AUsers.objects.filter(username=username)
-            aUser_serialized = serializers.serialize('json', aUser)
-            aUser_str = str(aUser_serialized)
-            formated_user = aUser_str.replace('\'', '\"')
-            jsonUser = json.loads(formated_user)
-            return Response(jsonUser.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # EventList

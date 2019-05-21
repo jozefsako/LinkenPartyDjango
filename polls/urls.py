@@ -12,6 +12,7 @@ urlpatterns = [
     path('currentUser/', views.Current_user),
     path('getUser', views.GetUser.as_view()),
     path('users/', views.UserList.as_view()),
+    path('register', views.insertUser()),
 
     # Events
     path('allEvents', views.GetAllEvents),
