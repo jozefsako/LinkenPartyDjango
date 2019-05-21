@@ -99,10 +99,28 @@ class UserList(APIView):
 
     def put(self, request, format=None):
         serializer = UserSerializerWithoutID(data=request.data)
-        print(serializer)
-        if serializer.is_valid():
+        
+        #Checks if username or email already exists
+        username = request.data['username']
+        email = request.data['email']
+
+        aUser1 = AUsers.objects.filter(username=username)
+        aUser2 = AUsers.objects.filter(email=email)
+
+        if(AUsers.objects.filter(username=username).count() > 0):
+            return Response(status=status.HTTP_409_CONFLICT)
+
+        elif(AUsers.objects.filter(email=email).count > 0):
+            return Response(status=status.HTTP_409_CONFLICT)
+
+        elif serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            aUser = AUsers.objects.filter(username=username)
+            aUser_serialized = serializers.serialize('json', aUser)
+            aUser_str = str(aUser_serialized)
+            formated_user = aUser_str.replace('\'', '\"')
+            jsonUser = json.loads(formated_user)
+            return Response(jsonUser.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -125,8 +143,9 @@ class EventList(APIView):
         return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
-        serializer = EventSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        id_event = request.data['id_event']
+        events = serializers.serialize(
+            'json', Events.objects.filter(id_event=id_event))
+        output = str(events)
+        formated_output = output.replace('\'', '\"')
+        return Response(json.loads(formated_output), status=status.HTTP_200_OK)
