@@ -76,9 +76,29 @@ def GetEventById(request):
      return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
+@api_view(['GET', 'POST'])
+def GetUserEvents(request):
+    id_user = request.data['id_user']
+    events = serializers.serialize(
+        'json', Events.objects.filter(id_user=id_user))
+    output = str(events)
+    formated_output = output.replace('\'', '\"')
+    return Response(json.loads(formated_output), status=status.HTTP_200_OK)
+
+
+@api_view(['GET', 'POST'])
+def GetFetarEvents(request):
+    id_user = request.data['id_user']
+    events = serializers.serialize(
+        'json', Events.objects.filter(id_event=Participations.objects.filter(id_user = id_user)))
+    output = str(events)
+    formated_output = output.replace('\'', '\"')
+    return Response(json.loads(formated_output), status=status.HTTP_200_OK)
+
+
 # Get all the Participations of Events
 # param: request
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def GetAllParticipations(request):
     participations = serializers.serialize(
         'json', Participations.objects.all())
@@ -89,11 +109,11 @@ def GetAllParticipations(request):
 
 # Get all the Participations of the Event
 # param: request
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 def GetEventParticipations(request):
     id_event = request.data['id_event']
     participations = serializers.serialize(
-        'json', Participations.objects.filter(id_event = id_event))
+        'json', Participations.objects.filter(id_event=id_event))
     output = str(participations)
     formated_output = output.replace('\'', '\"')
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
@@ -101,11 +121,11 @@ def GetEventParticipations(request):
 
 # Get all the Participations of the User
 # param: request
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 def GetUserParticipations(request):
     id_user = request.data['id_user']
     participations = serializers.serialize(
-        'json', Participations.objects.filter(id_user = id_user))
+        'json', Participations.objects.filter(id_user=id_user))
     output = str(participations)
     formated_output = output.replace('\'', '\"')
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
@@ -125,14 +145,14 @@ def insertUser(request):
     aUser2 = AUsers.objects.filter(email=email)
 
     if(AUsers.objects.filter(username=username).count() > 0):
-        return Response(status.HTTP_409_CONFLICT)
+        return Response(status = status.HTTP_409_CONFLICT)
 
     elif(AUsers.objects.filter(email=email).count() > 0):
-        return Response(status.HTTP_409_CONFLICT)
+        return Response(status = status.HTTP_409_CONFLICT)
 
     elif serializer.is_valid():
         serializer.save()
-        serializerTmp = UserSerializer(AUsers.objects.get(username = username))
+        serializerTmp = UserSerializer(AUsers.objects.get(username=username))
         return Response(serializerTmp.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
