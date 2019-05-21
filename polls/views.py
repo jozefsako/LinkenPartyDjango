@@ -160,3 +160,9 @@ class EventList(APIView):
         output = str(events)
         formated_output = output.replace('\'', '\"')
         return Response(json.loads(formated_output), status=status.HTTP_200_OK)
+
+
+# InsertEvent
+@api_view(['POST'])
+def insertEvent(request):
+    return 0
