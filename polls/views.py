@@ -89,19 +89,15 @@ def insertUser(request):
     aUser2 = AUsers.objects.filter(email=email)
 
     if(AUsers.objects.filter(username=username).count() > 0):
-        return Response(status=status.HTTP_409_CONFLICT)
+        return Response(status.HTTP_409_CONFLICT)
 
-    elif(AUsers.objects.filter(email=email).count > 0):
-        return Response(status=status.HTTP_409_CONFLICT)
+    elif(AUsers.objects.filter(email=email).count() > 0):
+        return Response(status.HTTP_409_CONFLICT)
 
     elif serializer.is_valid():
         serializer.save()
-        aUser = AUsers.objects.filter(username=username)
-        aUser_serialized = serializers.serialize('json', aUser)
-        aUser_str = str(aUser_serialized)
-        formated_user = aUser_str.replace('\'', '\"')
-        jsonUser = json.loads(formated_user)
-        return Response(jsonUser.data, status=status.HTTP_201_CREATED)
+        serializerTmp = UserSerializer(AUsers.objects.get(username = username))
+        return Response(serializerTmp.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
