@@ -26,4 +26,5 @@ urlpatterns = [
 
     # Participations
     path('participations', views.GetAllParticipations),
+    path('addParticipation', views.insertParticipation),
 ]
