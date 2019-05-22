@@ -66,6 +66,8 @@ def insertEvent(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Get the Event by an ID
+# param: request that contains the id of the Event
 @api_view(['GET'])
 def GetEventById(request):
      id_event = request.data['id_event']
@@ -76,6 +78,8 @@ def GetEventById(request):
      return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
+# Get all Events created by a User
+# param: request that contains the id of the user
 @api_view(['GET', 'POST'])
 def GetUserEvents(request):
     id_user = request.data['id_user']
@@ -86,11 +90,13 @@ def GetUserEvents(request):
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
+# Get all the Events of a partygoer
+# param: quest that contains the id of the user
 @api_view(['GET', 'POST'])
 def GetFetarEvents(request):
     id_user = request.data['id_user']
-    events = serializers.serialize(
-        'json', Events.objects.filter(id_event=Participations.objects.filter(id_user = id_user)))
+    events = serializers.serialize('json', Events.objects.raw(
+        "SELECT * FROM events ev WHERE ev.id_event IN (SELECT par.id_event FROM participations par WHERE par.id_user = %s)", [id_user]))
     output = str(events)
     formated_output = output.replace('\'', '\"')
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
@@ -131,6 +137,17 @@ def GetUserParticipations(request):
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
+# Insert a new Participation for an user
+# param: request that contains the id of the User and the Event
+@api_view(['GET', 'POST'])
+def insertParticipation(request):
+    serializer = ParticipationSerializerWithoutID(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 # Add new user
 # param: request
 @api_view(['POST'])
@@ -141,19 +158,16 @@ def insertUser(request):
     username = request.data['username']
     email = request.data['email']
 
-    aUser1 = AUsers.objects.filter(username=username)
-    aUser2 = AUsers.objects.filter(email=email)
-
     if(AUsers.objects.filter(username=username).count() > 0):
-        return Response(status = status.HTTP_409_CONFLICT)
+        return Response(status=status.HTTP_409_CONFLICT)
 
     elif(AUsers.objects.filter(email=email).count() > 0):
-        return Response(status = status.HTTP_409_CONFLICT)
+        return Response(status=status.HTTP_409_CONFLICT)
 
     elif serializer.is_valid():
         serializer.save()
         serializerTmp = UserSerializer(AUsers.objects.get(username=username))
-        return Response(serializerTmp.data)
+        return Response(serializerTmp.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

@@ -15,14 +15,14 @@ urlpatterns = [
     path('register', views.insertUser),
 
     # Events
-    path('allEvents', views.GetAllEvents),
-    path('getEvent', views.GetEventById),
-    path('events/', views.EventList.as_view()),
-    path('addEvent', views.insertEvent),
+    path('allEvents', views.GetAllEvents), #Obtenir tous les events
+    path('getEvent', views.GetEventById), #Obtenir un event {id_event}
+    path('events/', views.EventList.as_view()), #
+    path('addEvent', views.insertEvent), #Ajouter un event {json}
     path('eventParticipations', views.GetEventParticipations),
-    path('userParticipations', views.GetUserParticipations),
-    path('userEvents', views.GetUserEvents),
-    path('fetarEvents', views.GetFetarEvents),
+    path('userParticipations', views.GetUserParticipations), #Participations d'un fetard 
+    path('userEvents', views.GetUserEvents),   #Events créée par un user
+    path('fetarEvents', views.GetFetarEvents), #Events d'un fetard 
 
     # Participations
     path('participations', views.GetAllParticipations),
