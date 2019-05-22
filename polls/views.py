@@ -50,21 +50,21 @@ def GetAllEvents(request):
 
     if request.method == 'POST':
 
-        currentDate = datetime.date.today()
+        currentDate = datetime.datetime.now().date()
         lat = request.data['lng']
         lng = request.data['lat']
         d = request.data['distance']
-        r = d / R
+        r = float(d / R)
 
-        lat_max = lat + r
-        lat_min = lat - r
+        lat_max = float(lat + r)
+        lat_min = float(lat - r)
 
-        lng_max = lng + r
-        lng_min = lng - r
+        lng_max = float(lng + r)
+        lng_min = float(lng - r)
 
         events = serializers.serialize('json', Events.objects.raw(
-            "SELECT * FROM events ev WHERE (ev.end_date >= " + currentDate + ") AND (ev.lat <= " + lat_max + " AND ev.lat >= " + lat_min + ") AND (ev.lng <= " + lng_max + " AND ev.lng >= " + lng_min+")"))
-
+            "SELECT * FROM events ev WHERE (ev.end_date >= " + str(currentDate) + ") AND (ev.lat <= " + str(lat_max) + " AND ev.lat >= " + str(lat_max) + " ) AND (ev.lng <= " + str(lng_max) + " AND ev.lng >= " +str(lng_min 
+        )+ " )"))
         output = str(events)
         formated_output = output.replace('\'', '\"')
         return Response(json.loads(formated_output), status=status.HTTP_200_OK)
