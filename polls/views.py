@@ -61,10 +61,20 @@ def GetAllEvents(request):
 
         lng_max = float(lng + r)
         lng_min = float(lng - r)
+        print("r : ", r)
+        print("lat_max : " , lat_max)
+        print("lat_min : " , lat_min)
+        print("lng_max : " , lng_max)
+        print("lng_min : " , lng_min)
+
+        # events = serializers.serialize('json', Events.objects.raw(
+        #     "SELECT * FROM events ev WHERE (ev.end_date >= " + str(currentDate) + ") AND (ev.lat <= " + str(lat_max) + " AND ev.lat >= " + str(lat_max) + " ) AND (ev.lng <= " + str(lng_max) + " AND ev.lng >= " +str(lng_min 
+        # )+ " )"))
 
         events = serializers.serialize('json', Events.objects.raw(
-            "SELECT * FROM events ev WHERE (ev.end_date >= " + str(currentDate) + ") AND (ev.lat <= " + str(lat_max) + " AND ev.lat >= " + str(lat_max) + " ) AND (ev.lng <= " + str(lng_max) + " AND ev.lng >= " +str(lng_min 
+            "SELECT * FROM events ev WHERE (ev.lat <= " + str(lat_max) + " AND ev.lat >= " + str(lat_min) + " ) AND (ev.lng <= " + str(lng_max) + " AND ev.lng >= " +str(lng_min 
         )+ " )"))
+
         output = str(events)
         formated_output = output.replace('\'', '\"')
         return Response(json.loads(formated_output), status=status.HTTP_200_OK)
