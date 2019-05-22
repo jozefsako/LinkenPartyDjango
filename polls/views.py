@@ -13,6 +13,7 @@ from django.core import serializers
 from django.conf import settings
 from django.db import connection
 from .models import *
+import datetime
 
 
 def index(request):
@@ -44,10 +45,29 @@ def GetAllUsers(request):
 @api_view(['GET', 'POST'])
 def GetAllEvents(request):
 
+    # Radian KM
+    R = 6371
+
     if request.method == 'POST':
-        longitude = request.data['longitude']
-        latitude = request.data['latitude']
-        distance = request.data['distance']
+
+        currentDate = datetime.date.today()
+        lat = request.data['lng']
+        lng = request.data['lat']
+        d = request.data['distance']
+        r = d / R
+
+        lat_max = lat + r
+        lat_min = lat - r
+
+        lng_max = lng + r
+        lng_min = lng - r
+
+        events = serializers.serialize('json', Events.objects.raw(
+            "SELECT * FROM events ev WHERE (ev.end_date >= " + currentDate + ") AND (ev.lat <= " + lat_max + " AND ev.lat >= " + lat_min + ") AND (ev.lng <= " + lng_max + " AND ev.lng >= " + lng_min+")"))
+
+        output = str(events)
+        formated_output = output.replace('\'', '\"')
+        return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
     elif request.method == 'GET':
         events = serializers.serialize('json', Events.objects.all())

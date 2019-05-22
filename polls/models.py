@@ -7,6 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
+import math  
 
 class Events(models.Model):
     id_event = models.IntegerField(primary_key=True)
@@ -25,8 +26,8 @@ class Events(models.Model):
     description_event = models.TextField(blank=True, null=True)
     type_event = models.CharField(max_length=50)
     version_number = models.IntegerField()
-    lat = models.DecimalField(decimal_places=6,max_digits=6)
-    lng = models.DecimalField(decimal_places=6,max_digits=6)
+    lat = models.DecimalField(max_digits=10, decimal_places=6)
+    lng = models.DecimalField(max_digits=10, decimal_places=6)
 
     class Meta:
         managed = False
@@ -117,3 +118,24 @@ class AUsersWithouID(models.Model):
     class Meta:
         managed = False
         db_table = 'ausers'
+
+
+# class Geolocalisation:
+    
+#     RAD_MILES = 3959
+#     RAD_KM = 6371
+
+#     @staticmethod
+#     def calculateRadius(x1, y1, x2, y2):
+#         radius = math.sqrt(pow(x2-x1, 2) + pow(y2-y1, 2))
+#         return radius
+
+#     @staticmethod
+#     def convertDistanceIntoRadKM(distance):
+#         r = distance / RAD_KM
+#         return r
+
+#     @staticmethod
+#     def convertDistanceIntoRadMILES(distance):
+#         r = distance / RAD_MILES
+#         return r
