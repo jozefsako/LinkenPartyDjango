@@ -25,6 +25,6 @@ urlpatterns = [
     path('fetarEvents', views.GetFetarEvents), #Events d'un fetard 
 
     # Participations
-    path('participations', views.GetAllParticipations),
-    path('addParticipation', views.insertParticipation),
+    path('participations', views.GetAllParticipations), #Get all the participations in the system
+    path('addParticipation', views.insertParticipation), #Add participation {json}
 ]

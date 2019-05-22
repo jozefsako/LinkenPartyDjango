@@ -25,6 +25,8 @@ class Events(models.Model):
     description_event = models.TextField(blank=True, null=True)
     type_event = models.CharField(max_length=50)
     version_number = models.IntegerField()
+    lat = models.DecimalField(decimal_places=6,max_digits=6)
+    lng = models.DecimalField(decimal_places=6,max_digits=6)
 
     class Meta:
         managed = False
@@ -47,6 +49,8 @@ class EventsWithoutID(models.Model):
     description_event = models.TextField(blank=True, null=True)
     type_event = models.CharField(max_length=50)
     version_number = models.IntegerField()
+    lat = models.DecimalField(decimal_places=6,max_digits=6)
+    lng = models.DecimalField(decimal_places=6,max_digits=6)
 
     class Meta:
         managed = False
