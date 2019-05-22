@@ -13,7 +13,7 @@ from django.core import serializers
 from django.conf import settings
 from django.db import connection
 from .models import *
-import datetime
+from datetime import datetime
 
 
 def index(request):
@@ -50,9 +50,12 @@ def GetAllEvents(request):
 
     if request.method == 'POST':
 
-        currentDate = datetime.datetime.now().date()
-        lat = request.data['lng']
-        lng = request.data['lat']
+        currentDate = datetime.today().strftime('%Y-%m-%d')
+        print(" DATE DU JOUR ", currentDate)
+        st_event = 'Confirmed'
+
+        lng = request.data['lng']
+        lat = request.data['lat']
         d = request.data['distance']
         r = float(d / R)
 
@@ -61,19 +64,8 @@ def GetAllEvents(request):
 
         lng_max = float(lng + r)
         lng_min = float(lng - r)
-        print("r : ", r)
-        print("lat_max : " , lat_max)
-        print("lat_min : " , lat_min)
-        print("lng_max : " , lng_max)
-        print("lng_min : " , lng_min)
 
-        # events = serializers.serialize('json', Events.objects.raw(
-        #     "SELECT * FROM events ev WHERE (ev.end_date >= " + str(currentDate) + ") AND (ev.lat <= " + str(lat_max) + " AND ev.lat >= " + str(lat_max) + " ) AND (ev.lng <= " + str(lng_max) + " AND ev.lng >= " +str(lng_min 
-        # )+ " )"))
-
-        events = serializers.serialize('json', Events.objects.raw(
-            "SELECT * FROM events ev WHERE (ev.lat <= " + str(lat_max) + " AND ev.lat >= " + str(lat_min) + " ) AND (ev.lng <= " + str(lng_max) + " AND ev.lng >= " +str(lng_min 
-        )+ " )"))
+        events = serializers.serialize('json', Events.objects.raw("SELECT * FROM events WHERE ( end_date >= " + str(currentDate) + " ) AND ((( lat <= " + str(lat_max) + " ) AND (lat >= " + str(lat_min) + " )) AND (( lng <= " + str(lng_max) + " ) AND ( lng >= " + str(lng_min) + "  )))"))
 
         output = str(events)
         formated_output = output.replace('\'', '\"')
