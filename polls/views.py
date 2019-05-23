@@ -68,15 +68,15 @@ def GetAllEvents(request):
     
         output = str(events)
         #formated_output = output.replace('\'', '\"')
-        formated_output = output.replace("\\", r"\\")
-        return Response(json.loads(formated_output), status=status.HTTP_200_OK)
+        #formated_output = output.replace("\\", r"\\")
+        return Response(json.loads(output), status=status.HTTP_200_OK)
 
     elif request.method == 'GET':
         events = serializers.serialize('json', Events.objects.all())
         output = str(events)
         #formated_output = output.replace('\'', '\"')
-        formated_output = output.replace("\\", r"\\")
-        return Response(json.loads(formated_output), status=status.HTTP_200_OK)
+        #formated_output = output.replace("\\", r"\\")
+        return Response(json.loads(output), status=status.HTTP_200_OK)
 
 
 # InsertEvent
