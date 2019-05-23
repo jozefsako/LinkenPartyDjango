@@ -49,13 +49,12 @@ def GetAllEvents(request):
     R = 6371
 
     if request.method == 'POST':
-
         currentDate = datetime.today().strftime('%Y-%m-%d')
         print(" DATE DU JOUR ", currentDate)
         st_event = 'Confirmed'
 
-        lng = request.data['lng']
-        lat = request.data['lat']
+        lng = float(request.data['lng'])
+        lat = float(request.data['lat'])
         d = request.data['distance']
         r = float(d / R)
 
@@ -92,12 +91,12 @@ def insertEvent(request):
 # param: request that contains the id of the Event
 @api_view(['GET'])
 def GetEventById(request):
-     id_event = request.data['id_event']
-     events = serializers.serialize(
-         'json', Events.objects.filter(id_event=id_event))
-     output = str(events)
-     formated_output = output.replace('\'', '\"')
-     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
+    id_event = request.data['id_event']
+    events = serializers.serialize(
+        'json', Events.objects.filter(id_event=id_event))
+    output = str(events)
+    formated_output = output.replace('\'', '\"')
+    return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
 # Get all Events created by a User
@@ -110,7 +109,7 @@ def GetUserEvents(request):
     output = str(events)
     formated_output = output.replace('\'', '\"')
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
-    
+
 
 # Get all the Events of a partygoer
 # param: quest that contains the id of the user
@@ -127,10 +126,10 @@ def GetFetarEvents(request):
 @api_view(['GET', 'POST'])
 def UpdateEvent(request):
     d = request.data
-    Events.objects.filter(pk=request.data['id_event']).update(name_event=d['name_event'], theme_event = d['theme_event'], creation_date=d['creation_date'], start_date=d['start_date'], end_date=d['end_date'], price=d['price'], address_event=d['address_event'], size_hosting=d['size_hosting'], state_event=d['state_event'], description_event=d['description_event'], type_event=d['type_event'], lat=d['lat'], lng = d['lng'])
-    return Response(status=status.HTTP_200_OK) 
-    
-    
+    Events.objects.filter(pk=request.data['id_event']).update(name_event=d['name_event'], theme_event=d['theme_event'], creation_date=d['creation_date'], start_date=d['start_date'], end_date=d['end_date'],price=d['price'], address_event=d['address_event'], size_hosting=d['size_hosting'], state_event=d['state_event'], description_event=d['description_event'], type_event=d['type_event'], lat=d['lat'], lng=d['lng'])
+    return Response(status=status.HTTP_200_OK)
+
+
 # Get all the Participations of Events
 # param: request
 @api_view(['GET', 'POST'])
