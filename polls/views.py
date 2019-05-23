@@ -55,17 +55,16 @@ def GetAllEvents(request):
 
         lng = float(request.data['lng'])
         lat = float(request.data['lat'])
-        d = request.data['distance']
+        d = float(request.data['distance'])
         r = float(d / R)
-
         lat_max = float(lat + r)
         lat_min = float(lat - r)
-
         lng_max = float(lng + r)
         lng_min = float(lng - r)
 
-        events = serializers.serialize('json', Events.objects.raw("SELECT * FROM events WHERE ( end_date >= " + str(currentDate) + " ) AND ((( lat <= " + str(lat_max) + " ) AND (lat >= " + str(lat_min) + " )) AND (( lng <= " + str(lng_max) + " ) AND ( lng >= " + str(lng_min) + "  )))"))
-
+        query = "SELECT * from events where ( 6371 * acos( cos( radians(" + str(lat)+ ") ) * cos( radians( lat ) ) * cos( radians( lng ) - radians("+str(lng) +  ") ) + sin( radians( " + str(lat)+ ") ) * sin( radians( lat ) ) ) )  < "+ str(d)
+        events = serializers.serialize('json', Events.objects.raw(query))
+    
         output = str(events)
         formated_output = output.replace('\'', '\"')
         return Response(json.loads(formated_output), status=status.HTTP_200_OK)
