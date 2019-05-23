@@ -1,23 +1,23 @@
 from django.test import TestCase
-# from django.urls import reverse
-# from .models import Post
+from .models import Events
 
-# Create your tests here.
+class EventsTestCase(TestCase):
 
+    def setUp(self):
+        self.event1 = Events.objects.create(
+          username='author@test.com',
+          email='author@test.com',
+          user_type=User.AUTHOR
+        )
+        self.publisher = User.objects.create(
+          username='publisher@test.com',
+          email='publisher@test.com',
+          user_type=User.AUTHOR
+        )
 
-class PostTests(TestCase):
+    def test_get_authors(self):
+      self.assertEqual(User.get_authors(), 1)
 
-    # def setUp(self):
-    #     Post.objects.create(text='just a test')
-
-    # def test_post_list_view(self):
-    #     response = self.client.get(reverse('posts'))
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertContains(response, 'just a test')
-    #     self.assertTemplateUsed(response, 'posts.html')
-
-    def hello(name):
-        return 'Hello ' + 'name'
-
-    def test_hello():
-        assert hello('name') == 'Hello name'
+    def test_can_write_books(self):
+      self.assertTrue(self.author.can_write_books())
+      self.assertFalse(self.publisher.can_write_books())

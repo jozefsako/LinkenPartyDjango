@@ -103,10 +103,10 @@ def GetEventById(request):
 @api_view(['GET', 'POST'])
 def GetUserEvents(request):
     id_user = request.data['id_user']
-    events = serializers.serialize(
-        'json', Events.objects.filter(id_user=id_user))
+    events = serializers.serialize('json', Events.objects.filter(id_user=id_user))
     output = str(events)
-    formated_output = output.replace('\'', '\"')
+    #formated_output = output.replace('\'', '\"')
+    formated_output = output.replace("\\", r"\\")
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
