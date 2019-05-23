@@ -110,7 +110,7 @@ def GetUserEvents(request):
     output = str(events)
     formated_output = output.replace('\'', '\"')
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
-
+    
 
 # Get all the Events of a partygoer
 # param: quest that contains the id of the user
@@ -124,6 +124,13 @@ def GetFetarEvents(request):
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
+@api_view(['GET', 'POST'])
+def UpdateEvent(request):
+    d = request.data
+    Events.objects.filter(pk=request.data['id_event']).update(name_event=d['name_event'], theme_event = d['theme_event'], creation_date=d['creation_date'], start_date=d['start_date'], end_date=d['end_date'], price=d['price'], address_event=d['address_event'], size_hosting=d['size_hosting'], state_event=d['state_event'], description_event=d['description_event'], type_event=d['type_event'], lat=d['lat'], lng = d['lng'])
+    return Response(status=status.HTTP_200_OK) 
+    
+    
 # Get all the Participations of Events
 # param: request
 @api_view(['GET', 'POST'])
