@@ -24,6 +24,7 @@ urlpatterns = [
     path('userEvents', views.GetUserEvents),   #Events créée par un user
     path('fetarEvents', views.GetFetarEvents), #Events d'un fetard 
     path('updateEvent', views.UpdateEvent),
+    path('updateStateEvent', views.UpdateStateEvent),
     # path('eventsAndParticipations', views.GetEventsAndParticipations), #Events et le Nombre de Participations
     
     # Participations

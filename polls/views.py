@@ -134,6 +134,19 @@ def UpdateEvent(request):
     return Response(status=status.HTTP_200_OK)
 
 
+@api_view(['GET', 'POST'])
+def UpdateStateEvent(request):
+    old_state = request.data['state_event']
+    id_event = request.data['id_event']
+
+    if(old_state == "Confirmed" or old_state == "confirmed"):
+        Events.objects.filter(pk=request.data['id_event']).update(state_event='Canceled')
+    else:
+        Events.objects.filter(pk=request.data['id_event']).update(state_event='Confirmed')
+        
+    return Response(status=status.HTTP_200_OK)
+
+
 # Get all the Participations of Events
 # param: request
 @api_view(['GET', 'POST'])
