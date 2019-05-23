@@ -36,7 +36,8 @@ def Current_user(request):
 def GetAllUsers(request):
     ausers = serializers.serialize('json', AUsers.objects.all())
     output = str(ausers)
-    formated_output = output.replace('\'', '\"')
+    #formated_output = output.replace('\'', '\"')
+    formated_output = output.replace("\\", r"\\")
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
@@ -66,13 +67,15 @@ def GetAllEvents(request):
         events = serializers.serialize('json', Events.objects.raw(query))
     
         output = str(events)
-        formated_output = output.replace('\'', '\"')
+        #formated_output = output.replace('\'', '\"')
+        formated_output = output.replace("\\", r"\\")
         return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
     elif request.method == 'GET':
         events = serializers.serialize('json', Events.objects.all())
         output = str(events)
-        formated_output = output.replace('\'', '\"')
+        #formated_output = output.replace('\'', '\"')
+        formated_output = output.replace("\\", r"\\")
         return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
@@ -94,7 +97,8 @@ def GetEventById(request):
     events = serializers.serialize(
         'json', Events.objects.filter(id_event=id_event))
     output = str(events)
-    formated_output = output.replace('\'', '\"')
+    #formated_output = output.replace('\'', '\"')
+    formated_output = output.replace("\\", r"\\")
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
@@ -118,7 +122,8 @@ def GetFetarEvents(request):
     events = serializers.serialize('json', Events.objects.raw(
         "SELECT * FROM events ev WHERE ev.id_event IN (SELECT par.id_event FROM participations par WHERE par.id_user = %s)", [id_user]))
     output = str(events)
-    formated_output = output.replace('\'', '\"')
+    #formated_output = output.replace('\'', '\"')
+    formated_output = output.replace("\\", r"\\")
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
@@ -136,7 +141,8 @@ def GetAllParticipations(request):
     participations = serializers.serialize(
         'json', Participations.objects.all())
     output = str(participations)
-    formated_output = output.replace('\'', '\"')
+    #formated_output = output.replace('\'', '\"')
+    formated_output = output.replace("\\", r"\\")
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
@@ -148,7 +154,8 @@ def GetEventParticipations(request):
     participations = serializers.serialize(
         'json', Participations.objects.filter(id_event=id_event))
     output = str(participations)
-    formated_output = output.replace('\'', '\"')
+    #formated_output = output.replace('\'', '\"')
+    formated_output = output.replace("\\", r"\\")
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
@@ -160,7 +167,8 @@ def GetUserParticipations(request):
     participations = serializers.serialize(
         'json', Participations.objects.filter(id_user=id_user))
     output = str(participations)
-    formated_output = output.replace('\'', '\"')
+    #formated_output = output.replace('\'', '\"')
+    formated_output = output.replace("\\", r"\\")
     return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
 
@@ -204,7 +212,8 @@ class GetUser(APIView):
         aUser = AUsers.objects.filter(id=id_user)
         aUser_serialized = serializers.serialize('json', aUser)
         aUser_str = str(aUser_serialized)
-        formated_user = aUser_str.replace('\'', '\"')
+        #formated_user = aUser_str.replace('\'', '\"')
+        formated_user = aUser_str.replace("\\", r"\\")
         return Response(json.loads(formated_user), status=status.HTTP_200_OK)
 
 
@@ -216,7 +225,8 @@ class UserList(APIView):
         aUser = AUsers.objects.filter(username=username)
         aUser_serialized = serializers.serialize('json', aUser)
         aUser_str = str(aUser_serialized)
-        formated_user = aUser_str.replace('\'', '\"')
+        #formated_user = aUser_str.replace('\'', '\"')
+        formated_user = aUser_str.replace("\\", r"\\")
         jsonUser = json.loads(formated_user)
         if(jsonUser[0]['fields']['password'] == password):
              return Response(json.loads(formated_user), status=status.HTTP_202_ACCEPTED)
@@ -230,7 +240,8 @@ class EventList(APIView):
         events = serializers.serialize(
             'json', Events.objects.filter(id_event=id_event))
         output = str(events)
-        formated_output = output.replace('\'', '\"')
+        #formated_output = output.replace('\'', '\"')
+        formated_output = output.replace("\\", r"\\")
         return Response(json.loads(formated_output), status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
@@ -238,5 +249,6 @@ class EventList(APIView):
         events = serializers.serialize(
             'json', Events.objects.filter(id_event=id_event))
         output = str(events)
-        formated_output = output.replace('\'', '\"')
+        #formated_output = output.replace('\'', '\"')
+        formated_output = output.replace("\\", r"\\")
         return Response(json.loads(formated_output), status=status.HTTP_200_OK)
